@@ -2,17 +2,13 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, ShieldCheck, Truck } from 'lucide-react'
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, ShieldCheck } from 'lucide-react'
 import { useCartStore } from '@/store/Cart'
 
 export default function CartPage() {
     const { items, removeItem, updateQuantity, getTotalPrice, clearCart } = useCartStore()
 
     const subtotal = getTotalPrice()
-    const freeShippingThreshold = 100
-    const shipping = subtotal > freeShippingThreshold || subtotal === 0 ? 0 : 10
-    const tax = subtotal * 0.1
-    const total = subtotal + shipping + tax
 
     if (items.length === 0) {
         return (
@@ -58,6 +54,8 @@ export default function CartPage() {
                             const variant = item.product.variants?.find(v => v.sku === item.selectedSku)
                             const unitPrice = variant?.price ?? item.product.basePrice
                             const image = item.product.images?.[0]
+                            const availableStock = variant ? variant.stock : item.product.totalStock
+                            const atStockLimit = item.quantity >= availableStock
 
                             return (
                                 <div key={`${item.product._id}-${item.selectedSku ?? ''}`} className="p-5 flex gap-4">
@@ -85,11 +83,14 @@ export default function CartPage() {
                                                         .join(' · ')}
                                                 </p>
                                             )}
-                                            <p className="text-sm text-neutral-400 mt-1">${unitPrice.toFixed(2)} each</p>
+                                            <p className="text-sm text-neutral-400 mt-1">₦{unitPrice.toFixed(2)} each</p>
                                         </div>
 
-                                        <div className="flex items-center justify-between sm:flex-col sm:items-end gap-3">
-                                            <p className="font-bold text-neutral-900">${(unitPrice * item.quantity).toFixed(2)}</p>
+                                        <div className="flex items-center justify-between sm:flex-col sm:items-end gap-2">
+                                            <p className="font-bold text-neutral-900">₦{(unitPrice * item.quantity).toFixed(2)}</p>
+                                            {atStockLimit && (
+                                                <p className="text-xs text-orange-600">Max stock reached</p>
+                                            )}
 
                                             <div className="flex items-center gap-3">
                                                 <div className="flex items-center border border-neutral-200 rounded-full">
@@ -104,8 +105,9 @@ export default function CartPage() {
                                                         {item.quantity}
                                                     </span>
                                                     <button
-                                                        onClick={() => updateQuantity(item.product._id, item.quantity + 1, item.selectedSku)}
-                                                        className="p-2 hover:bg-neutral-50 rounded-r-full transition-colors"
+                                                        onClick={() => !atStockLimit && updateQuantity(item.product._id, item.quantity + 1, item.selectedSku)}
+                                                        disabled={atStockLimit}
+                                                        className="p-2 hover:bg-neutral-50 rounded-r-full transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                                                         aria-label="Increase quantity"
                                                     >
                                                         <Plus className="w-3.5 h-3.5 text-neutral-600" />
@@ -143,32 +145,16 @@ export default function CartPage() {
                             <div className="space-y-3 mb-5 text-sm">
                                 <div className="flex justify-between text-neutral-500">
                                     <span>Subtotal</span>
-                                    <span className="text-neutral-900 font-medium">${subtotal.toFixed(2)}</span>
+                                    <span className="text-neutral-900 font-medium">₦{subtotal.toFixed(2)}</span>
                                 </div>
-                                <div className="flex justify-between text-neutral-500">
-                                    <span>Shipping</span>
-                                    <span className="text-neutral-900 font-medium">
-                                        {shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between text-neutral-500">
-                                    <span>Tax (10%)</span>
-                                    <span className="text-neutral-900 font-medium">${tax.toFixed(2)}</span>
-                                </div>
-                                <div className="border-t border-neutral-200 pt-3 flex justify-between">
+                                <div className="border-t border-neutral-200 pt-3 flex justify-between items-baseline">
                                     <span className="font-semibold text-neutral-900">Total</span>
-                                    <span className="font-bold text-neutral-900 text-lg">${total.toFixed(2)}</span>
+                                    <div className="text-right">
+                                        <span className="font-bold text-neutral-900 text-lg">₦{subtotal.toFixed(2)}</span>
+                                        <p className="text-xs text-neutral-400 mt-0.5">+ shipping, calculated at checkout</p>
+                                    </div>
                                 </div>
                             </div>
-
-                            {subtotal > 0 && subtotal < freeShippingThreshold && (
-                                <div className="mb-5 p-3 bg-primary-50 rounded-xl text-sm text-primary-800 flex items-start gap-2">
-                                    <Truck className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                                    <span>
-                                        Add <span className="font-semibold">${(freeShippingThreshold - subtotal).toFixed(2)}</span> more for free shipping
-                                    </span>
-                                </div>
-                            )}
 
                             <Link
                                 href="/checkout"

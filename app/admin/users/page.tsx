@@ -1,95 +1,105 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useAuthStore } from '@/store/auth'
-import { searchUsers, updateUserRole, AdminUser } from '@/lib/admin'
+import { searchUsers, AdminUser } from '@/lib/admin'
 
-const ROLES = ['buyer', 'seller', 'admin', 'super_admin', 'support']
+const ROLE_TABS = [
+    { key: '', label: 'All' },
+    { key: 'buyer', label: 'Buyers' },
+    { key: 'seller', label: 'Sellers' },
+    { key: 'admin', label: 'Admins' },
+    { key: 'support', label: 'Support' },
+    { key: 'super_admin', label: 'Super Admins' },
+]
+
+const ROLE_STYLES: Record<string, string> = {
+    buyer: 'bg-neutral-100 text-neutral-600',
+    seller: 'bg-blue-100 text-blue-700',
+    admin: 'bg-purple-100 text-purple-700',
+    support: 'bg-teal-100 text-teal-700',
+    super_admin: 'bg-black text-white',
+}
 
 export default function AdminUsersPage() {
     const currentUser = useAuthStore(state => state.user)
     const isSuperAdmin = currentUser?.role === 'super_admin'
 
     const [query, setQuery] = useState('')
+    const [roleFilter, setRoleFilter] = useState('')
     const [users, setUsers] = useState<AdminUser[]>([])
     const [loading, setLoading] = useState(true)
-    const [busyId, setBusyId] = useState<string | null>(null)
 
-    const load = (q: string) => {
+    const load = (q: string, role: string) => {
         setLoading(true)
-        searchUsers(q || undefined)
+        searchUsers(q || undefined, role || undefined)
             .then(setUsers)
             .finally(() => setLoading(false))
     }
 
-    useEffect(() => { load('') }, [])
+    useEffect(() => { load(query, roleFilter) }, [roleFilter])
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault()
-        load(query)
-    }
-
-    const handleRoleChange = async (id: string, role: string) => {
-        setBusyId(id)
-        try {
-            const updated = await updateUserRole(id, role)
-            setUsers(prev => prev.map(u => (u._id === id ? updated : u)))
-        } finally {
-            setBusyId(null)
-        }
+        load(query, roleFilter)
     }
 
     return (
-        <div className=''>
+        <div>
             <h1 className="text-2xl font-bold text-neutral-900 mb-2">Users</h1>
             {!isSuperAdmin && (
-                <p className="text-sm text-black mb-4">
+                <p className="text-sm text-orange-600 mb-4">
                     Only a super_admin can change roles. You can view users but not edit them.
                 </p>
             )}
 
-            <form onSubmit={handleSearch} className="flex gap-2 mb-6 ">
+            {/* Role category tabs — segments the platform's people into
+                clear groups: normal buyers, sellers/vendors, and staff. */}
+            <div className="flex gap-2 mb-4 flex-wrap">
+                {ROLE_TABS.map(tab => (
+                    <button
+                        key={tab.key}
+                        onClick={() => setRoleFilter(tab.key)}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium ${
+                            roleFilter === tab.key ? 'bg-neutral-900 text-white' : 'bg-neutral-100 text-neutral-600'
+                        }`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
+
+            <form onSubmit={handleSearch} className="flex gap-2 mb-6">
                 <input
                     value={query}
                     onChange={e => setQuery(e.target.value)}
                     placeholder="Search by name or email..."
-                    className="flex-1 border border-neutral-900 text-black rounded-lg px-4 py-2"
+                    className="flex-1 border border-neutral-300 rounded-lg px-4 py-2"
                 />
-                <button type="submit" className="px-4 py-2 bg-neutral-900 text-neutral-300 rounded-lg font-medium">
+                <button type="submit" className="px-4 py-2 bg-neutral-900 text-white rounded-lg font-medium">
                     Search
                 </button>
             </form>
 
-            {loading && <p className="text-neutral-900">Loading...</p>}
-            {!loading && users.length === 0 && <p className="text-neutral-900">No users found.</p>}
+            {loading && <p className="text-neutral-500">Loading...</p>}
+            {!loading && users.length === 0 && <p className="text-neutral-500">No users found.</p>}
 
             <div className="space-y-2">
                 {users.map(user => (
-                    <div
+                    <Link
                         key={user._id}
-                        className="bg-white border text-black border-neutral-300 rounded-lg p-4 flex items-center justify-between"
+                        href={`/admin/users/${user._id}`}
+                        className="bg-white border border-neutral-200 rounded-lg p-4 flex items-center justify-between hover:border-neutral-300 transition-colors"
                     >
                         <div>
                             <p className="font-medium text-neutral-900">{user.name}</p>
                             <p className="text-sm text-neutral-500">{user.email}</p>
                         </div>
-                        {isSuperAdmin ? (
-                            <select
-                                value={user.role}
-                                disabled={busyId === user._id || user._id === currentUser?.id}
-                                onChange={e => handleRoleChange(user._id, e.target.value)}
-                                className="text-sm border border-neutral-300 text-black rounded-lg px-3 py-1.5 capitalize mt-10"
-                            >
-                                {ROLES.map(r => (
-                                    <option key={r} value={r}>{r.replace('_', ' ')}</option>
-                                ))}
-                            </select>
-                        ) : (
-                            <span className="text-sm px-3 py-1.5 rounded-full bg-neutral-100 text-neutral-600 capitalize">
-                                {user.role.replace('_', ' ')}
-                            </span>
-                        )}
-                    </div>
+                        <span className={`text-xs px-3 py-1.5 rounded-full font-medium capitalize ${ROLE_STYLES[user.role] ?? 'bg-neutral-100 text-neutral-600'}`}>
+                            {user.role.replace('_', ' ')}
+                        </span>
+                    </Link>
                 ))}
             </div>
         </div>

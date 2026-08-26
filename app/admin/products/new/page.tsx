@@ -157,7 +157,7 @@ export default function NewProductPage() {
                 variants: builtVariants,
             })
 
-            router.push('/sell/products?submitted=1')
+            router.push('/admin/products?submitted=1')
         } catch (err) {
             setError(err instanceof ApiError ? err.message : 'Something went wrong. Please try again.')
         } finally {
@@ -169,7 +169,7 @@ export default function NewProductPage() {
         <div className="max-w-3xl mx-auto px-4 pt-36 md:pt-40 pb-10">
             <h1 className="text-2xl font-bold text-neutral-900 mb-2">Add a Product</h1>
             <p className="text-neutral-500 mb-8">
-                New listings go to an admin for review before they appear in the shop.
+                As an admin, products you add are published immediately &mdash; no review needed.
             </p>
 
             {error && (

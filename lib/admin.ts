@@ -148,6 +148,39 @@ export function updateUserRole(id: string, role: string): Promise<AdminUser> {
     })
 }
 
+export interface AdminUserAddress {
+    _id: string
+    label: string
+    line1: string
+    city: string
+    state: string
+    phone?: string
+    isDefault: boolean
+}
+
+export interface AdminUserFull extends AdminUser {
+    addresses?: AdminUserAddress[]
+}
+
+export interface AdminUserVendor {
+    _id: string
+    storeName: string
+    storeSlug: string
+    status: 'pending' | 'approved' | 'suspended' | 'rejected'
+    commissionRate: number
+    createdAt: string
+}
+
+export interface UserDetail {
+    user: AdminUserFull
+    vendor: AdminUserVendor | null
+    orderCount: number
+}
+
+export function getUserDetail(id: string): Promise<UserDetail> {
+    return authedFetch<UserDetail>(`/users/admin/${id}`)
+}
+
 // ─── Deeper stats breakdown ───
 export interface VendorBreakdown {
     vendorId: string

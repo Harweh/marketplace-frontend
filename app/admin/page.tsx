@@ -1,30 +1,34 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
-import { getSalesStats, getSalesBreakdown, SalesStats, SalesBreakdown } from '@/lib/admin'
+import { getModerationQueue, getVendors, getAllOrders, getSalesStats, getSalesBreakdown, SalesStats, SalesBreakdown } from '@/lib/admin'
 
-export default function AdminStatsPage() {
+export default function AdminDashboard() {
+    const [pendingProducts, setPendingProducts] = useState<number | null>(null)
+    const [pendingVendors, setPendingVendors] = useState<number | null>(null)
+    const [recentOrders, setRecentOrders] = useState<number | null>(null)
     const [sales, setSales] = useState<SalesStats | null>(null)
     const [breakdown, setBreakdown] = useState<SalesBreakdown | null>(null)
-    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        Promise.all([getSalesStats(), getSalesBreakdown()])
-            .then(([s, b]) => {
-                setSales(s)
-                setBreakdown(b)
-            })
-            .finally(() => setLoading(false))
+        getModerationQueue().then(list => setPendingProducts(list.length)).catch(() => setPendingProducts(0))
+        getVendors('pending').then(list => setPendingVendors(list.length)).catch(() => setPendingVendors(0))
+        getAllOrders(1).then(res => setRecentOrders(res.total)).catch(() => setRecentOrders(0))
+        getSalesStats().then(setSales).catch(() => setSales(null))
+        getSalesBreakdown().then(setBreakdown).catch(() => setBreakdown(null))
     }, [])
 
-    if (loading) {
-        return <p className="text-neutral-500">Loading stats...</p>
-    }
+    const queueCards = [
+        { label: 'Products Awaiting Review', value: pendingProducts, href: '/admin/products', color: 'bg-orange-50 text-orange-700' },
+        { label: 'Vendor Applications Pending', value: pendingVendors, href: '/admin/vendors', color: 'bg-blue-50 text-blue-700' },
+        { label: 'Total Orders', value: recentOrders, href: '/admin/orders', color: 'bg-green-50 text-green-700' },
+    ]
 
-    const summaryCards = sales
+    const salesCards = sales
         ? [
             { label: 'Today', total: sales.today.total, count: sales.today.count },
             { label: 'This Week', total: sales.week.total, count: sales.week.count },
@@ -38,29 +42,44 @@ export default function AdminStatsPage() {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold text-neutral-900 mb-6">Stats</h1>
+            <h1 className="text-2xl font-bold text-neutral-900 mb-6">Dashboard</h1>
 
-            {/* Summary cards */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10">
-                {summaryCards.map(card => (
+            {/* Sales summary */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
+                {sales === null && <p className="text-neutral-500 col-span-4">Loading sales data...</p>}
+                {salesCards.map(card => (
                     <div key={card.label} className="p-6 rounded-xl bg-neutral-900 text-white">
                         <p className="text-sm text-neutral-300 mb-2">{card.label}</p>
-                        <p className="text-2xl font-bold">${card.total.toFixed(2)}</p>
+                        <p className="text-2xl font-bold">₦{card.total.toFixed(2)}</p>
                         <p className="text-xs text-neutral-400 mt-1">{card.count} paid order{card.count === 1 ? '' : 's'}</p>
                     </div>
                 ))}
             </div>
 
+            {/* Needs attention */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                {queueCards.map(card => (
+                    <Link
+                        key={card.label}
+                        href={card.href}
+                        className={`p-6 rounded-xl ${card.color} hover:opacity-80 transition-opacity`}
+                    >
+                        <p className="text-sm font-medium mb-2">{card.label}</p>
+                        <p className="text-3xl font-bold">{card.value === null ? '…' : card.value}</p>
+                    </Link>
+                ))}
+            </div>
+
             {/* Daily trend chart */}
-            <div className="bg-white rounded-xl border border-neutral-200 p-6 mb-10">
+            <div className="bg-white rounded-xl border border-neutral-200 p-6 mb-8">
                 <h2 className="font-semibold text-neutral-900 mb-4">Sales — Last 30 Days</h2>
                 {breakdown && breakdown.daily.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={280}>
+                    <ResponsiveContainer width="100%" height={260}>
                         <LineChart data={breakdown.daily}>
                             <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                             <YAxis tick={{ fontSize: 12 }} />
-                            <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                            <Tooltip formatter={(value: number) => `₦${value.toFixed(2)}`} />
                             <Line type="monotone" dataKey="total" stroke="#000000" strokeWidth={2} dot={false} />
                         </LineChart>
                     </ResponsiveContainer>
@@ -79,13 +98,10 @@ export default function AdminStatsPage() {
                                 <div key={cat.category}>
                                     <div className="flex justify-between text-sm mb-1">
                                         <span className="text-neutral-700 capitalize">{cat.category}</span>
-                                        <span className="font-medium text-neutral-900">${cat.total.toFixed(2)}</span>
+                                        <span className="font-medium text-neutral-900">₦{cat.total.toFixed(2)}</span>
                                     </div>
                                     <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-neutral-900 rounded-full"
-                                            style={{ width: `${(cat.total / maxCategoryTotal) * 100}%` }}
-                                        />
+                                        <div className="h-full bg-neutral-900 rounded-full" style={{ width: `${(cat.total / maxCategoryTotal) * 100}%` }} />
                                     </div>
                                 </div>
                             ))}
@@ -104,13 +120,10 @@ export default function AdminStatsPage() {
                                 <div key={v.vendorId}>
                                     <div className="flex justify-between text-sm mb-1">
                                         <span className="text-neutral-700">{v.storeName || 'Unknown vendor'}</span>
-                                        <span className="font-medium text-neutral-900">${v.total.toFixed(2)}</span>
+                                        <span className="font-medium text-neutral-900">₦{v.total.toFixed(2)}</span>
                                     </div>
                                     <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-primary-600 rounded-full"
-                                            style={{ width: `${(v.total / maxVendorTotal) * 100}%` }}
-                                        />
+                                        <div className="h-full bg-primary-600 rounded-full" style={{ width: `${(v.total / maxVendorTotal) * 100}%` }} />
                                     </div>
                                 </div>
                             ))}

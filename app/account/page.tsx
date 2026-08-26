@@ -1,15 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { User, MapPin, Package, LogOut, Star, Plus, Trash2, ShieldCheck } from 'lucide-react'
+import { User, MapPin, Package, LogOut, Star, Plus, Trash2, ShieldCheck, Heart } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
+import { useWishlistStore } from '@/store/Wishlist'
 import { updateProfile, addAddress, updateAddress, deleteAddress, getMyOrders, MyOrder } from '@/lib/profile'
 import { ApiError } from '@/lib/api'
 import { Address } from '@/types'
+import ProductCard from '@/components/ProductCard'
 
-type Tab = 'overview' | 'profile' | 'addresses' | 'orders'
+type Tab = 'overview' | 'profile' | 'addresses' | 'orders' | 'wishlist'
 
 const STATUS_STYLES: Record<string, string> = {
     placed: 'bg-blue-100 text-blue-700',
@@ -25,9 +27,11 @@ const STATUS_STYLES: Record<string, string> = {
 
 export default function AccountPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const { user, isAuthenticated, fetchMe, logout } = useAuthStore()
+    const { items: wishlistItems, removeItem: removeFromWishlist } = useWishlistStore()
     const [checked, setChecked] = useState(false)
-    const [tab, setTab] = useState<Tab>('overview')
+    const [tab, setTab] = useState<Tab>((searchParams.get('tab') as Tab) || 'overview')
 
     useEffect(() => {
         fetchMe().finally(() => setChecked(true))
@@ -135,6 +139,7 @@ export default function AccountPage() {
         { id: 'overview', label: 'Overview', icon: Star },
         { id: 'profile', label: 'Profile', icon: User },
         { id: 'addresses', label: 'Addresses', icon: MapPin },
+        { id: 'wishlist', label: 'Wishlist', icon: Heart },
         { id: 'orders', label: 'Orders', icon: Package },
     ]
 
@@ -223,7 +228,7 @@ export default function AccountPage() {
                                                     <p className="font-medium text-neutral-900 text-sm">#{order.orderNumber}</p>
                                                     <p className="text-xs text-neutral-400">{new Date(order.createdAt).toLocaleDateString()}</p>
                                                 </div>
-                                                <p className="font-semibold text-neutral-900 text-sm">${order.totalAmount.toFixed(2)}</p>
+                                                <p className="font-semibold text-neutral-900 text-sm">₦{order.totalAmount.toFixed(2)}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -337,6 +342,37 @@ export default function AccountPage() {
                             </div>
                         )}
 
+                        {/* ── WISHLIST ── */}
+                        {tab === 'wishlist' && (
+                            <div className="bg-white rounded-2xl border border-neutral-200 p-6">
+                                <div className="flex items-center justify-between mb-5">
+                                    <h2 className="font-semibold text-lg text-neutral-900">Your Wishlist</h2>
+                                    <span className="text-sm text-neutral-500">{wishlistItems.length} item{wishlistItems.length === 1 ? '' : 's'}</span>
+                                </div>
+
+                                {wishlistItems.length === 0 ? (
+                                    <p className="text-sm text-neutral-500">
+                                        Nothing saved yet. <Link href="/shop" className="text-primary-600 font-medium">Browse products</Link>.
+                                    </p>
+                                ) : (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                        {wishlistItems.map(product => (
+                                            <div key={product._id} className="relative">
+                                                <ProductCard product={product} />
+                                                <button
+                                                    onClick={() => removeFromWishlist(product._id)}
+                                                    className="absolute top-3 left-3 w-8 h-8 flex items-center justify-center bg-white/90 hover:bg-white text-neutral-600 hover:text-red-600 rounded-full shadow-sm transition-colors"
+                                                    aria-label="Remove from wishlist"
+                                                >
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         {/* ── ORDERS ── */}
                         {tab === 'orders' && (
                             <div className="bg-white rounded-2xl border border-neutral-200 p-6">
@@ -354,7 +390,7 @@ export default function AccountPage() {
                                         <div key={order._id} className="border border-neutral-200 rounded-xl p-4">
                                             <div className="flex items-center justify-between mb-2">
                                                 <p className="font-semibold text-neutral-900 text-sm">#{order.orderNumber}</p>
-                                                <p className="font-bold text-neutral-900 text-sm">${order.totalAmount.toFixed(2)}</p>
+                                                <p className="font-bold text-neutral-900 text-sm">₦{order.totalAmount.toFixed(2)}</p>
                                             </div>
                                             <p className="text-xs text-neutral-400 mb-3">
                                                 {new Date(order.createdAt).toLocaleDateString()} · Payment: {order.paymentStatus}

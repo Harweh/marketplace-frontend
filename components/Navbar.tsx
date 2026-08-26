@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/store/Cart';
-import { useWishlistStore } from '@/store/Wishlist';
-import { X, ShoppingCart, User, Search, Heart, MenuIcon } from 'lucide-react';
+import { X, ShoppingCart, User, Search, MenuIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
 
 export default function Navbar() {
@@ -16,7 +15,6 @@ export default function Navbar() {
     const [searchTerm, setSearchTerm] = useState('')
 
     const totalItems = useCartStore(state => state.getTotalItems())
-    const wishlistItems = useWishlistStore(state => state.items)
     const { isAuthenticated } = useAuthStore()
 
     const handleSearchSubmit = (e: React.FormEvent) => {
@@ -120,20 +118,6 @@ export default function Navbar() {
 
                     {/* Right Icons */}
                     <div className="flex items-center gap-4">
-                        {/* Wishlist */}
-                        <Link
-                            href="/wishlist"
-                            className="relative text-gray-700 hover:text-black transition-colors hidden sm:block"
-                            aria-label="Wishlist"
-                        >
-                            <Heart className="w-5 h-5" />
-                            {mounted && wishlistItems.length > 0 && (
-                                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                                    {wishlistItems.length}
-                                </span>
-                            )}
-                        </Link>
-
                         {/* Cart */}
                         <Link
                             href="/cart"

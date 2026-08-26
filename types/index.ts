@@ -151,6 +151,7 @@ export interface CartState {
     clearCart: () => void
     getTotalPrice: () => number
     getTotalItems: () => number
+    syncFromServer: () => Promise<void>
 }
 
 // ─── Wishlist Types ───
@@ -159,6 +160,7 @@ export interface WishlistState {
     addItem: (product: Product) => void
     removeItem: (productId: string) => void
     isInWishlist: (productId: string) => boolean
+    syncFromServer: () => Promise<void>
 }
 
 // ─── Filter Types ───

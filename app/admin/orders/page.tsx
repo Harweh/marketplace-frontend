@@ -61,7 +61,7 @@ export default function AdminOrdersPage() {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="font-bold text-neutral-900">${order.totalAmount.toFixed(2)}</p>
+                                    <p className="font-bold text-neutral-900">₦{order.totalAmount.toFixed(2)}</p>
                                     <p className="text-xs text-neutral-500 capitalize">{order.paymentStatus}</p>
                                 </div>
                             </div>

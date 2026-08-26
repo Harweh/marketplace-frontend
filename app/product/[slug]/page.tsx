@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { Heart, ShoppingBag, Truck, Shield, ArrowLeft, Check, Star, Trash2 } from 'lucide-react'
 import ProductCard from '@/components/ProductCard'
 import { getProductBySlug, getProducts } from '@/lib/products'
-import { getReviews, createReview, deleteReview, Review } from '@/lib/reviews'
+import { getReviews, createReview, deleteReview, getReviewEligibility, Review } from '@/lib/reviews'
 import { useCartStore } from '@/store/Cart'
 import { useWishlistStore } from '@/store/Wishlist'
 import { useAuthStore } from '@/store/auth'
@@ -37,6 +37,7 @@ export default function ProductDetailPage() {
     const [reviewComment, setReviewComment] = useState('')
     const [submittingReview, setSubmittingReview] = useState(false)
     const [reviewError, setReviewError] = useState<string | null>(null)
+    const [reviewEligible, setReviewEligible] = useState(false)
 
     useEffect(() => {
         setProduct(null)
@@ -51,6 +52,11 @@ export default function ProductDetailPage() {
             setProduct(p)
             setSelectedSku(p.hasVariants ? p.variants[0]?.sku : undefined)
             getReviews(p._id).then(setReviews).finally(() => setReviewsLoaded(true))
+            if (currentUser) {
+                getReviewEligibility(p._id)
+                    .then(res => setReviewEligible(res.eligible))
+                    .catch(() => setReviewEligible(false))
+            }
             return getProducts({ category: p.category, limit: 5 })
         })
         .then(result => {
@@ -203,12 +209,14 @@ export default function ProductDetailPage() {
 
                         <div className="flex items-center gap-3 mb-6">
                             <span className="text-3xl font-bold text-neutral-900">
-                                ${displayPrice.toFixed(2)}
+                                ₦{displayPrice.toFixed(2)}
                             </span>
                             {availableStock === 0 ? (
                                 <span className="text-red-600 text-sm font-medium">Out of stock</span>
-                            ) : availableStock < 10 ? (
-                                <span className="text-orange-600 text-sm font-medium">Only {availableStock} left</span>
+                            ) : availableStock <= 3 ? (
+                                <span className="text-red-600 text-sm font-medium">Only a few left</span>
+                            ) : availableStock <= 10 ? (
+                                <span className="text-orange-600 text-sm font-medium">Low stock</span>
                             ) : null}
                         </div>
 
@@ -230,13 +238,18 @@ export default function ProductDetailPage() {
                                             const matchingVariant = product.variants.find(v =>
                                                 v.attributes[key] === value
                                             )
+                                            const isSoldOut = !matchingVariant || matchingVariant.stock === 0
                                             const isSelected = selectedVariant?.attributes[key] === value
                                             return (
                                                 <button
                                                     key={value}
-                                                    onClick={() => matchingVariant && setSelectedSku(matchingVariant.sku)}
-                                                    className={`px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
-                                                        isSelected
+                                                    onClick={() => !isSoldOut && matchingVariant && setSelectedSku(matchingVariant.sku)}
+                                                    disabled={isSoldOut}
+                                                    title={isSoldOut ? `${value} is sold out` : undefined}
+                                                    className={`relative px-4 py-2 rounded-lg border-2 text-sm font-medium transition-colors ${
+                                                        isSoldOut
+                                                            ? 'border-neutral-200 text-neutral-400 cursor-not-allowed line-through decoration-neutral-400'
+                                                            : isSelected
                                                             ? 'border-primary-600 bg-primary-50 text-primary-700'
                                                             : 'border-neutral-300 text-neutral-700 hover:border-neutral-400'
                                                     }`}
@@ -292,7 +305,7 @@ export default function ProductDetailPage() {
                         <div className="border-t border-neutral-200 pt-6 space-y-3 text-sm text-neutral-600">
                             <div className="flex items-center gap-2">
                                 <Truck className="w-5 h-5" />
-                                Free shipping on orders over $50
+                                Shipping calculated by distance at checkout
                             </div>
                             <div className="flex items-center gap-2">
                                 <Shield className="w-5 h-5" />
@@ -308,7 +321,7 @@ export default function ProductDetailPage() {
                         Reviews {product.reviewCount > 0 && `(${product.reviewCount})`}
                     </h2>
 
-                    {currentUser && !myReview && (
+                    {currentUser && reviewEligible && !myReview && (
                         <form onSubmit={handleSubmitReview} className="bg-white border border-neutral-200 rounded-xl p-5 mb-6 max-w-lg">
                             {reviewError && (
                                 <div className="mb-3 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">

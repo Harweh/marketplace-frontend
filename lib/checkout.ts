@@ -18,6 +18,29 @@ export interface CheckoutResponse {
     authorizationUrl: string
 }
 
+export interface VendorShippingBreakdown {
+    vendorName: string
+    subtotal: number
+    shippingFee: number
+}
+
+export interface CheckoutPreview {
+    vendors: VendorShippingBreakdown[]
+    subtotal: number
+    totalShipping: number
+    total: number
+}
+
+export function previewCheckout(
+    items: CheckoutItem[],
+    shippingAddress: ShippingAddress
+): Promise<CheckoutPreview> {
+    return authedFetch<CheckoutPreview>('/checkout/preview', {
+        method: 'POST',
+        body: { items, shippingAddress },
+    })
+}
+
 export function startCheckout(
     items: CheckoutItem[],
     shippingAddress: ShippingAddress

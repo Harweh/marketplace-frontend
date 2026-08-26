@@ -131,7 +131,7 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
                     {/* Price */}
                     <div className="flex items-center gap-2">
                         <span className="text-xl font-bold text-neutral-900">
-                            ${product.basePrice.toFixed(2)}
+                            ₦{product.basePrice.toFixed(2)}
                         </span>
                     </div>
 

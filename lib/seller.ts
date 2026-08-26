@@ -43,6 +43,9 @@ export function getMyVendorProfile(): Promise<VendorProfile> {
 export interface ApplyVendorInput {
     storeName: string
     description?: string
+    storeAddress: string
+    storeCity: string
+    storeState: string
 }
 
 export function applyAsVendor(input: ApplyVendorInput): Promise<VendorProfile> {
@@ -61,4 +64,43 @@ export function getMyProducts(): Promise<Product[]> {
 // the same order are never included).
 export function getMyOrders(): Promise<SellerOrder[]> {
     return authedFetch<SellerOrder[]>('/orders/seller')
+}
+
+// Sellers can only move an order forward: confirmed → packed → shipped.
+// The backend enforces this even if the frontend sends something else.
+export function updateSellerOrderStatus(
+    orderId: string,
+    subOrderId: string,
+    status: string
+): Promise<unknown> {
+    return authedFetch(`/orders/seller/${orderId}/suborders/${subOrderId}/status`, {
+        method: 'PATCH',
+        body: { status },
+    })
+}
+
+export interface UpdateProductInput {
+    title?: string
+    description?: string
+    category?: string
+    images?: string[]
+    basePrice?: number
+    variants?: { sku: string; attributes: Record<string, string>; price: number; stock: number }[]
+}
+
+// Editing price/stock is instant. Editing title/description/images/category
+// sends the listing back to admin review — see the backend for why.
+export function updateMyProduct(id: string, input: UpdateProductInput): Promise<Product> {
+    return authedFetch<Product>(`/products/${id}`, {
+        method: 'PATCH',
+        body: input,
+    })
+}
+
+// Soft-delete only — never removes the product, just stops it showing
+// in the shop. Past orders referencing it stay intact.
+export function delistMyProduct(id: string): Promise<Product> {
+    return authedFetch<Product>(`/products/${id}/delist`, {
+        method: 'PATCH',
+    })
 }

@@ -14,6 +14,10 @@ export function getReviews(productId: string): Promise<Review[]> {
     return apiFetch<Review[]>(`/products/${productId}/reviews`)
 }
 
+export function getReviewEligibility(productId: string): Promise<{ eligible: boolean; reason: string | null }> {
+    return authedFetch<{ eligible: boolean; reason: string | null }>(`/products/${productId}/reviews/eligibility`)
+}
+
 export function createReview(productId: string, rating: number, comment: string): Promise<Review> {
     return authedFetch<Review>(`/products/${productId}/reviews`, {
         method: 'POST',
