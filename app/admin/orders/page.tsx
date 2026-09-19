@@ -56,7 +56,7 @@ export default function AdminOrdersPage() {
                                     <p className="text-sm text-neutral-500">
                                         {buyer ? `${buyer.name} • ${buyer.email}${buyer.phone ? ` • ${buyer.phone}` : ''}` : 'Buyer info unavailable'}
                                     </p>
-                                    <p className="text-sm text-neutral-500">
+                                    <p className="text-sm text-neutral-900">
                                         {order.shippingAddress.line1}, {order.shippingAddress.city}, {order.shippingAddress.state}
                                     </p>
                                 </div>
@@ -76,13 +76,13 @@ export default function AdminOrdersPage() {
                                                 <p className="text-sm font-medium text-neutral-800">
                                                     {vendor ? vendor.storeName : 'Vendor'} — {sub.items.length} item(s) — ${sub.subtotal.toFixed(2)}
                                                 </p>
-                                                <p className="text-xs text-neutral-500 capitalize">Status: {sub.status.replace('_', ' ')}</p>
+                                                <p className="text-xs text-neutral-900 capitalize">Status: {sub.status.replace('_', ' ')}</p>
                                             </div>
                                             <select
                                                 value={sub.status}
                                                 disabled={busyKey === key}
                                                 onChange={e => handleStatusChange(order._id, sub._id, e.target.value)}
-                                                className="text-sm border border-neutral-300 rounded-lg px-2 py-1.5"
+                                                className="text-sm border text-black border-neutral-500 rounded-lg px-2 py-1.5"
                                             >
                                                 {STATUS_OPTIONS.map(s => (
                                                     <option key={s} value={s}>{s.replace('_', ' ')}</option>

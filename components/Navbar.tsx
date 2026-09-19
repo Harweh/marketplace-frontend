@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useCartStore } from '@/store/Cart';
-import { X, ShoppingCart, User, Search, MenuIcon } from 'lucide-react';
 import { useAuthStore } from '@/store/auth';
+import NotificationBell from '@/components/NotificationBell';
+import { X, ShoppingCart, User, Search, MenuIcon } from 'lucide-react';
 
 export default function Navbar() {
     const router = useRouter()
@@ -24,8 +25,8 @@ export default function Navbar() {
         setIsSearchOpen(false)
     }
 
-    // The cart/wishlist counts come from localStorage (via zustand persist),
-    // which the server can't see. Rendering them only after mount avoids a
+    // The cart count comes from localStorage (via zustand persist), which
+    // the server can't see. Rendering it only after mount avoids a
     // hydration mismatch between the server's "0" and the client's real count.
     useEffect(() => {
         setMounted(true)
@@ -51,29 +52,27 @@ export default function Navbar() {
             isScrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-white shadow-md'
         }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                
+
                 {/* Top Banner */}
                 <div className="flex items-center justify-center border-b border-gray-100">
-                    <h2 className='text-black text-sm sm:text-base md:text-lg lg:text-xl py-3 md:py-4 font-bold text-center'> 
+                    <h2 className='text-black text-sm sm:text-base md:text-lg lg:text-xl py-3 md:py-4 font-bold text-center'>
                         Welcome to your number one online commerce
                     </h2>
                 </div>
 
                 {/* Main Navigation */}
                 <div className="flex items-center justify-between py-4 lg:py-4 px-1 lg:px-0">
-                    
+
                     {/* Left Side - Mobile Menu & Search */}
                     <div className="flex items-center gap-3 md:hidden">
-                        {/* Mobile Menu Button */}
-                        <button 
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                             className="text-black p- md:p-4"
                         >
                             {isMobileMenuOpen ? <X size={14} /> : <MenuIcon size={14} />}
                         </button>
 
-                        {/* Mobile Search Button */}
-                        <button 
+                        <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
                             className='text-gray-700 pt-1 hover:text-black'
                         >
@@ -82,8 +81,8 @@ export default function Navbar() {
                     </div>
 
                     {/* Logo */}
-                    <Link 
-                        href="/" 
+                    <Link
+                        href="/"
                         className="text-3xl md:text-3xl font-bold text-black absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
                         E-Shop
                     </Link>
@@ -117,7 +116,9 @@ export default function Navbar() {
                     </form>
 
                     {/* Right Icons */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 ">
+                        {isAuthenticated && <NotificationBell />}
+
                         {/* Cart */}
                         <Link
                             href="/cart"
@@ -165,25 +166,25 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="md:hidden absolute top-full left-0 right-80 h-[96vh] bg-white shadow-lg border-t border-gray-100">
                     <nav className="flex flex-col">
-                        <Link 
-                            href="/" 
+                        <Link
+                            href="/"
                             className="text-black py-4 px-6 hover:bg-gray-50 transition border-b border-gray-100"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Home
                         </Link>
                         {navigation.map((item) => (
-                            <Link 
+                            <Link
                                 key={item.name}
-                                href={item.href} 
+                                href={item.href}
                                 className="text-black py-4 px-6 hover:bg-gray-50 transition border-b border-gray-100"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 {item.name}
                             </Link>
                         ))}
-                        <Link 
-                            href="/contact" 
+                        <Link
+                            href="/contact"
                             className="text-black py-4 px-6 hover:bg-gray-50 transition"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
