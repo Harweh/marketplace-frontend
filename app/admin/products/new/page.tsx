@@ -605,7 +605,7 @@ export default function NewProductPage() {
                         onChange={e => setTitle(e.target.value)}
                         required
                         minLength={3}
-                        className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                        className="w-full border border-neutral-300 text-neutral-800 rounded-lg px-4 py-2.5"
                         placeholder="e.g. Minimalist Leather Tote"
                     />
                 </div>
@@ -618,7 +618,7 @@ export default function NewProductPage() {
                         required
                         minLength={10}
                         rows={4}
-                        className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                        className="w-full border border-neutral-300 text-neutral-800 text-black rounded-lg px-4 py-2.5"
                         placeholder="Describe the product..."
                     />
                 </div>
@@ -630,7 +630,7 @@ export default function NewProductPage() {
                             value={category}
                             onChange={e => setCategory(e.target.value)}
                             required
-                            className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                            className="w-full border border-neutral-300 text-neutral-800 rounded-lg px-4 py-2.5"
                             placeholder="e.g. Bags"
                         />
                     </div>
@@ -643,14 +643,14 @@ export default function NewProductPage() {
                             value={basePrice}
                             onChange={e => setBasePrice(e.target.value)}
                             required
-                            className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                            className="w-full border border-neutral-300 text-neutral-800 rounded-lg px-4 py-2.5"
                             placeholder="4999"
                         />
                     </div>
                 </div>
 
                 {/* Images */}
-                <div>
+                <div className='text-neutral-450'>
                     <label className="block font-medium text-neutral-800 mb-2">
                         Images (first = main image, rest = sub-images, up to 6)
                     </label>
@@ -662,7 +662,7 @@ export default function NewProductPage() {
                         className="block"
                     />
                     {previews.length > 0 && (
-                        <div className="flex gap-3 mt-3 flex-wrap">
+                        <div className="flex gap-3 mt-3 flex-wrap ">
                             {previews.map((src, i) => (
                                 // eslint-disable-next-line @next/next/no-img-element
                                 <img
@@ -699,7 +699,7 @@ export default function NewProductPage() {
                                 max="365"
                                 value={returnWindowDays}
                                 onChange={e => setReturnWindowDays(e.target.value)}
-                                className="w-32 border border-neutral-300 rounded-lg px-4 py-2.5"
+                                className="w-32 border border-neutral-400  text-neutral-800 rounded-lg px-4 py-2.5"
                             />
                             <p className="text-xs text-neutral-500 mt-1">
                                 e.g. 3 for fast-moving items, 7 or 30 for durable goods.
@@ -727,7 +727,7 @@ export default function NewProductPage() {
                     </label>
 
                     {hasVariants && (
-                        <div className="space-y-6 border border-neutral-200 rounded-lg p-4">
+                        <div className="space-y-6 border border-neutral-200 text-neutral-800 rounded-lg p-4">
                             {/* Colors */}
                             <div>
                                 <h4 className="text-sm font-semibold text-neutral-800 mb-2">Colors</h4>

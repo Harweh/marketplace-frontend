@@ -8,7 +8,7 @@
 // const NAV_ITEMS = [
 //     { name: 'Dashboard', href: '/sell' },
 //     { name: 'Products', href: '/sell/products' },
-//     { name: 'Orders', href: '/sell/orders' },
+//     { name: 'Orders', href: '/sell/order' },
 // ]
 
 // export default function SellerLayout({ children }: { children: React.ReactNode }) {
@@ -75,7 +75,6 @@
 // }
 
 
-
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -86,7 +85,8 @@ import { useAuthStore } from '@/store/auth'
 const NAV_ITEMS = [
     { name: 'Dashboard', href: '/sell' },
     { name: 'Products', href: '/sell/products' },
-    { name: 'Orders', href: '/sell/orders' },
+    { name: 'Orders', href: '/sell/order' },
+    { name: 'Notifications', href: '/notifications' },
 ]
 
 export default function SellerLayout({ children }: { children: React.ReactNode }) {
@@ -95,12 +95,6 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
     const [checked, setChecked] = useState(false)
 
     useEffect(() => {
-        // Always re-verify against the database on every visit — never
-        // trust a cached role. Someone's role can change (e.g. a vendor
-        // gets approved) while their browser still holds an old, stale
-        // saved role from before that change, especially after being
-        // away for a while and the app quietly refreshing just the
-        // access token without refreshing the role.
         const check = async () => {
             if (accessToken) {
                 try {
@@ -136,22 +130,27 @@ export default function SellerLayout({ children }: { children: React.ReactNode }
     }
 
     return (
-        <div className="min-h-screen bg-neutral-50 flex">
-            <aside className="w-56 bg-white border-r border-neutral-200 min-h-screen p-4 pt-36 md:pt-40">
-                <h2 className="font-bold text-lg mb-6 text-neutral-900">Seller Hub</h2>
-                <nav className="flex flex-col gap-1">
+        <div className="min-h-screen flex">
+            <aside className="w-60 bg-neutral-900 min-h-screen p-4 pt-36 md:pt-40 flex-shrink-0">
+                <div className="flex items-center gap-2 mb-8 px-2">
+                    <div className="w-7 h-7 rounded-lg bg-primary-600 flex items-center justify-center">
+                        <span className="text-white font-bold text-xs">S</span>
+                    </div>
+                    <h2 className="font-bold text-white text-sm tracking-wide">SELLER HUB</h2>
+                </div>
+                <nav className="flex flex-col gap-0.5">
                     {NAV_ITEMS.map(item => (
                         <Link
                             key={item.href}
                             href={item.href}
-                            className="px-3 py-2 rounded-lg text-neutral-700 hover:bg-neutral-100 font-medium"
+                            className="px-3 py-2.5 rounded-lg text-neutral-400 hover:bg-white/5 hover:text-white text-sm font-medium transition-colors"
                         >
                             {item.name}
                         </Link>
                     ))}
                 </nav>
             </aside>
-            <main className="flex-1 p-8 pt-36 md:pt-40">{children}</main>
+            <main className="flex-1 p-8 pt-36 md:pt-40 bg-neutral-50">{children}</main>
         </div>
     )
 }

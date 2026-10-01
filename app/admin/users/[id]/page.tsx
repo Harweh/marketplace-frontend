@@ -238,10 +238,10 @@ export default function AdminUserDetailPage() {
     }
 
     if (loading) {
-        return <p className="text-neutral-500">Loading...</p>
+        return <p className="text-neutral-900">Loading...</p>
     }
     if (!detail) {
-        return <p className="text-neutral-500">User not found.</p>
+        return <p className="text-neutral-900">User not found.</p>
     }
 
     const { user, vendor, orderCount } = detail
@@ -251,7 +251,7 @@ export default function AdminUserDetailPage() {
         <div>
             <button
                 onClick={() => router.back()}
-                className="inline-flex items-center gap-2 text-sm text-neutral-500 hover:text-neutral-900 mb-6"
+                className="inline-flex items-center gap-2 text-sm text-neutral-900 hover:text-neutral-900 mb-6"
             >
                 <ArrowLeft className="w-4 h-4" />
                 Back to Users
@@ -264,21 +264,21 @@ export default function AdminUserDetailPage() {
                 </div>
                 <div className="flex-1">
                     <h1 className="text-2xl font-bold text-neutral-900">{user.name}</h1>
-                    <p className="text-neutral-500 text-sm">{user.email}</p>
+                    <p className="text-neutral-900 text-sm">{user.email}</p>
                 </div>
                 {isSuperAdmin ? (
                     <select
                         value={user.role}
                         disabled={savingRole || user._id === currentUser?.id}
                         onChange={e => handleRoleChange(e.target.value)}
-                        className="text-sm border border-neutral-300 rounded-lg px-3 py-2 capitalize"
+                        className="text-sm border border-neutral-500 text-black rounded-lg px-3 py-2 capitalize"
                     >
                         {ROLES.map(r => (
                             <option key={r} value={r}>{r.replace('_', ' ')}</option>
                         ))}
                     </select>
                 ) : (
-                    <span className="text-sm px-3 py-2 rounded-full bg-neutral-100 text-neutral-600 capitalize">
+                    <span className="text-sm px-3 py-2 rounded-full bg-neutral-900 text-neutral-900 capitalize">
                         {user.role.replace('_', ' ')}
                     </span>
                 )}

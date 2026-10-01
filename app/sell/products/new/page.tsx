@@ -606,7 +606,7 @@ export default function NewProductPage() {
                         onChange={e => setTitle(e.target.value)}
                         required
                         minLength={3}
-                        className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                        className="w-full border border-neutral-300 text-neutral-900 rounded-lg px-4 py-2.5"
                         placeholder="e.g. Minimalist Leather Tote"
                     />
                 </div>
@@ -619,7 +619,7 @@ export default function NewProductPage() {
                         required
                         minLength={10}
                         rows={4}
-                        className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                        className="w-full border border-neutral-300 text-neutral-900 rounded-lg px-4 py-2.5"
                         placeholder="Describe the product..."
                     />
                 </div>
@@ -631,7 +631,7 @@ export default function NewProductPage() {
                             value={category}
                             onChange={e => setCategory(e.target.value)}
                             required
-                            className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                            className="w-full border border-neutral-300 text-neutral-900 rounded-lg px-4 py-2.5"
                             placeholder="e.g. Bags"
                         />
                     </div>
@@ -644,14 +644,14 @@ export default function NewProductPage() {
                             value={basePrice}
                             onChange={e => setBasePrice(e.target.value)}
                             required
-                            className="w-full border border-neutral-300 rounded-lg px-4 py-2.5"
+                            className="w-full border border-neutral-300 text-neutral-900 rounded-lg px-4 py-2.5"
                             placeholder="4999"
                         />
                     </div>
                 </div>
 
                 {/* Images */}
-                <div>
+                <div className='text-neutral-500'>
                     <label className="block font-medium text-neutral-800 mb-2">
                         Images (first = main image, rest = sub-images, up to 6)
                     </label>
@@ -700,14 +700,14 @@ export default function NewProductPage() {
                                 max="365"
                                 value={returnWindowDays}
                                 onChange={e => setReturnWindowDays(e.target.value)}
-                                className="w-32 border border-neutral-300 rounded-lg px-4 py-2.5"
+                                className="w-32 border border-neutral-300 text-neutral-900 rounded-lg px-4 py-2.5"
                             />
                             <p className="text-xs text-neutral-500 mt-1">
                                 e.g. 3 for fast-moving items, 7 or 30 for durable goods.
                             </p>
                         </div>
                     ) : (
-                        <p className="text-xs text-neutral-500">
+                        <p className="text-xs text-neutral-900">
                             Good for items like underwear, swimwear, perishables, or anything that can&apos;t be resold once opened.
                         </p>
                     )}
@@ -728,7 +728,7 @@ export default function NewProductPage() {
                     </label>
 
                     {hasVariants && (
-                        <div className="space-y-6 border border-neutral-200 rounded-lg p-4">
+                        <div className="space-y-6 border border-neutral-200 text-neutral-900rounded-lg p-4">
                             {/* Colors */}
                             <div>
                                 <h4 className="text-sm font-semibold text-neutral-800 mb-2">Colors</h4>
@@ -738,9 +738,9 @@ export default function NewProductPage() {
                                         onChange={e => setColorInput(e.target.value)}
                                         onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addColor() } }}
                                         placeholder="e.g. Red — press Enter to add"
-                                        className="flex-1 border border-neutral-300 rounded-lg px-3 py-2 text-sm"
+                                        className="flex-1 border border-neutral-300 text-neutral-900 rounded-lg px-3 py-2 text-sm"
                                     />
-                                    <button type="button" onClick={addColor} className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-sm font-medium rounded-lg">
+                                    <button type="button" onClick={addColor} className="px-4 py-2 bg-neutral-900 hover:bg-neutral-200 text-sm font-medium rounded-lg">
                                         Add
                                     </button>
                                 </div>
@@ -783,9 +783,9 @@ export default function NewProductPage() {
                                         onChange={e => setCustomSizeInput(e.target.value)}
                                         onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCustomSize() } }}
                                         placeholder="Custom size (e.g. One Size, 42)"
-                                        className="flex-1 border border-neutral-300 rounded-lg px-3 py-2 text-sm"
+                                        className="flex-1 border border-neutral-300 text-neutral-900 rounded-lg px-3 py-2 text-sm"
                                     />
-                                    <button type="button" onClick={addCustomSize} className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-sm font-medium rounded-lg">
+                                    <button type="button" onClick={addCustomSize} className="px-4 py-2 bg-neutral-900 hover:bg-neutral-200 text-sm font-medium rounded-lg">
                                         Add Size
                                     </button>
                                 </div>
@@ -820,17 +820,17 @@ export default function NewProductPage() {
                                             <input
                                                 value={v.sku}
                                                 onChange={e => updateVariant(i, 'sku', e.target.value)}
-                                                className="border border-neutral-300 rounded-lg px-3 py-2 text-sm"
+                                                className="border border-neutral-300 text-neutral-900 rounded-lg px-3 py-2 text-sm"
                                             />
-                                            <span className="text-sm text-neutral-600">{v.color || '—'}</span>
-                                            <span className="text-sm text-neutral-600">{v.size || '—'}</span>
+                                            <span className="text-sm text-neutral-900">{v.color || '—'}</span>
+                                            <span className="text-sm text-neutral-900">{v.size || '—'}</span>
                                             <input
                                                 type="number"
                                                 step="0.01"
                                                 placeholder="Price"
                                                 value={v.price}
                                                 onChange={e => updateVariant(i, 'price', e.target.value)}
-                                                className="border border-neutral-300 rounded-lg px-3 py-2 text-sm"
+                                                className="border border-neutral-300 text-neutral-900 rounded-lg px-3 py-2 text-sm"
                                             />
                                             <div className="flex gap-2">
                                                 <input
@@ -838,7 +838,7 @@ export default function NewProductPage() {
                                                     placeholder="Stock"
                                                     value={v.stock}
                                                     onChange={e => updateVariant(i, 'stock', e.target.value)}
-                                                    className="border border-neutral-300 rounded-lg px-3 py-2 text-sm flex-1"
+                                                    className="border border-neutral-300 text-neutral-900 rounded-lg px-3 py-2 text-sm flex-1"
                                                 />
                                                 <button type="button" onClick={() => removeVariantRow(i)} className="text-red-600 text-sm px-2">
                                                     ✕

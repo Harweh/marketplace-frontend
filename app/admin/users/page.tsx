@@ -94,7 +94,7 @@ export default function AdminUsersPage() {
                     >
                         <div>
                             <p className="font-medium text-neutral-900">{user.name}</p>
-                            <p className="text-sm text-neutral-500">{user.email}</p>
+                            <p className="text-sm text-neutral-900">{user.email}</p>
                         </div>
                         <span className={`text-xs px-3 py-1.5 rounded-full font-medium capitalize ${ROLE_STYLES[user.role] ?? 'bg-neutral-100 text-neutral-600'}`}>
                             {user.role.replace('_', ' ')}

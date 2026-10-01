@@ -168,7 +168,7 @@ export default function AdminVendorsPage() {
                 ))}
             </div>
 
-            {loading && <p className="text-neutral-500">Loading...</p>}
+            {loading && <p className="text-neutral-900">Loading...</p>}
             {!loading && vendors.length === 0 && (
                 <p className="text-neutral-500">No vendors in this category.</p>
             )}

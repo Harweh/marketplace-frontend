@@ -47,7 +47,7 @@ export default function SellerDashboard() {
                     <p className="text-sm font-medium mb-2">Pending Review</p>
                     <p className="text-2xl font-bold">{loading ? '…' : pending}</p>
                 </Link>
-                <Link href="/sell/orders" className="p-6 rounded-xl bg-blue-50 text-blue-700">
+                <Link href="/sell/order" className="p-6 rounded-xl bg-blue-50 text-blue-700">
                     <p className="text-sm font-medium mb-2">Total Orders</p>
                     <p className="text-2xl font-bold">{loading ? '…' : orders.length}</p>
                 </Link>

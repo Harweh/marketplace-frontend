@@ -1,30 +1,31 @@
-    'use client'
+'use client'
 
-    import { useSyncExternalStore } from 'react'
+    import { useEffect, useState } from 'react'
     import Link from 'next/link'
     import Image from 'next/image'
     import { ArrowRight, Sparkles, TrendingUp, Package } from 'lucide-react'
     import ProductCard from '@/components/ProductCard'
-    import { MOCK_PRODUCTS } from '@/lib/products'
+    import { getProducts } from '@/lib/products'
+    import { Product } from '@/types'
     import heaadset from '@/public/headphone.jpg'
 
-    // Detects whether we've hydrated on the client yet, without the extra
-    // render + lint issues that come from a useState/useEffect("mounted") pair.
-    const emptySubscribe = () => () => {}
-    function useMounted() {
-    return useSyncExternalStore(
-        emptySubscribe,
-        () => true,
-        () => false
-    )
-    }
-
     export default function HomePage() {
-    const mounted = useMounted()
+    const [products, setProducts] = useState<Product[]>([])
+    const [loading, setLoading] = useState(true)
 
-    const featuredProducts = MOCK_PRODUCTS.filter(p => p.featured).slice(0, 4)
-    const newArrivals = MOCK_PRODUCTS.filter(p => p.new).slice(0, 4)
-    const saleProducts = MOCK_PRODUCTS.filter(p => p.sale).slice(0, 4)
+    useEffect(() => {
+        getProducts({ limit: 12 })
+            .then(res => setProducts(res.products))
+            .finally(() => setLoading(false))
+    }, [])
+
+    // Real products carry no featured/new/sale flags — getProducts already
+    // sorts newest-first server-side, so we just slice different windows
+    // of the same list. Sale section is hidden (empty array) until the
+    // backend has a real discount/sale concept.
+    const featuredProducts = products.slice(0, 4)
+    const newArrivals = products.slice(4, 8)
+    const saleProducts: Product[] = []
 
     const categories = [
         {
@@ -49,7 +50,7 @@
         },
     ]
 
-    if (!mounted) return null
+    if (loading) return null
 
     return (
         <div className="min-h-screen">
@@ -201,7 +202,7 @@
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {featuredProducts.map((product, index) => (
                     <div 
-                    key={product.id}
+                    key={product._id}
                     className="animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                     >
@@ -236,7 +237,7 @@
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {newArrivals.map((product, index) => (
                     <div 
-                    key={product.id}
+                    key={product._id}
                     className="animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
                     >
@@ -272,7 +273,7 @@
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {saleProducts.map((product, index) => (
                     <div 
-                        key={product.id}
+                        key={product._id}
                         className="animate-fade-in"
                         style={{ animationDelay: `${index * 100}ms` }}
                     >
