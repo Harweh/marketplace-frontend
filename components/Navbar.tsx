@@ -42,9 +42,8 @@ export default function Navbar() {
 
     const navigation = [
         { name: 'Shop', href: '/shop' },
-        { name: 'Catalog', href: '/catalog' },
-        { name: 'New Arrivals', href: '/new' },
-        { name: 'Sale', href: '/sale' },
+        { name: 'Wishlist', href: '/wishlist' },
+        { name: 'Cart', href: '/cart' },
     ]
 
     return (
@@ -67,7 +66,7 @@ export default function Navbar() {
                     <div className="flex items-center gap-3 md:hidden">
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                            className="text-black p- md:p-4"
+                            className="text-black p-2 md:p-4"
                         >
                             {isMobileMenuOpen ? <X size={14} /> : <MenuIcon size={14} />}
                         </button>
@@ -164,7 +163,7 @@ export default function Navbar() {
 
             {/* Mobile Menu Dropdown */}
             {isMobileMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 right-80 h-[96vh] bg-white shadow-lg border-t border-gray-100">
+                <div className="md:hidden absolute top-full left-0 w-80 h-[96vh] bg-white shadow-lg border-t border-gray-100">
                     <nav className="flex flex-col">
                         <Link
                             href="/"
@@ -184,11 +183,11 @@ export default function Navbar() {
                             </Link>
                         ))}
                         <Link
-                            href="/contact"
+                            href="/shop"
                             className="text-black py-4 px-6 hover:bg-gray-50 transition"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
-                            Contact
+                            All Products
                         </Link>
                     </nav>
                 </div>

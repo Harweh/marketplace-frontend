@@ -1,15 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { User, MapPin, Package, LogOut, Star, Plus, Trash2, ShieldCheck, Heart } from 'lucide-react'
+import { User, MapPin, Package, LogOut, Star, Plus, Trash2, ShieldCheck, Heart, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth'
 import { useWishlistStore } from '@/store/Wishlist'
 import { updateProfile, addAddress, updateAddress, deleteAddress, getMyOrders, MyOrder } from '@/lib/profile'
 import { ApiError } from '@/lib/api'
 import { Address } from '@/types'
 import ProductCard from '@/components/ProductCard'
+
+export const dynamic = 'force-dynamic'
 
 type Tab = 'overview' | 'profile' | 'addresses' | 'orders' | 'wishlist'
 
@@ -26,6 +28,22 @@ const STATUS_STYLES: Record<string, string> = {
 }
 
 export default function AccountPage() {
+    return (
+        <Suspense fallback={<AccountFallback />}>
+            <AccountContent />
+        </Suspense>
+    )
+}
+
+function AccountFallback() {
+    return (
+        <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
+        </div>
+    )
+}
+
+function AccountContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const { user, isAuthenticated, fetchMe, logout } = useAuthStore()

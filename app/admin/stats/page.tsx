@@ -60,7 +60,7 @@ export default function AdminStatsPage() {
                             <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
                             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                             <YAxis tick={{ fontSize: 12 }} />
-                            <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                            {/* <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} /> */}
                             <Line type="monotone" dataKey="total" stroke="#000000" strokeWidth={2} dot={false} />
                         </LineChart>
                     </ResponsiveContainer>

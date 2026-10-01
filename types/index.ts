@@ -77,7 +77,6 @@ export interface Product {
     title: string
     slug: string
     description: string
-    // Soft reference to Category.slug, not a populated ObjectId (see project tracker).
     category: string
     images: string[]
     basePrice: number
@@ -88,6 +87,8 @@ export interface Product {
     reviewCount: number
     status: ProductStatus
     rejectionReason?: string
+    isReturnable: boolean
+    returnWindowDays: number
     createdAt: string
     updatedAt: string
 }

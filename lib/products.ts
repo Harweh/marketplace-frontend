@@ -46,6 +46,8 @@ export interface CreateProductInput {
         price: number
         stock: number
     }[]
+    isReturnable?: boolean
+    returnWindowDays?: number
 }
 
 // POST /api/products — seller-only, requires an approved vendor profile.

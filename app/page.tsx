@@ -1,66 +1,15 @@
-// 'use client'
-
-// import { useEffect, useState } from 'react'
-// import Link from 'next/link'
-// import ProductCard from '@/components/ProductCard'
-// import { getProducts } from '@/lib/products'
-// import { Product } from '@/types'
-
-// export default function HomePage() {
-//     const [products, setProducts] = useState<Product[]>([])
-//     const [loading, setLoading] = useState(true)
-
-//     useEffect(() => {
-//         getProducts({ limit: 12 })
-//             .then(res => setProducts(res.products))
-//             .finally(() => setLoading(false))
-//     }, [])
-
-//     return (
-//         <div className="min-h-screen bg-neutral-50">
-//             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-36 md:pt-40 pb-8">
-//                 <div className="text-center mb-12">
-//                     <h1 className="font-display text-4xl font-bold text-neutral-900 mb-3">
-//                         Welcome to E-Shop
-//                     </h1>
-//                     <p className="text-neutral-600">Discover products from independent sellers.</p>
-//                 </div>
-
-//                 <div className="flex items-center justify-between mb-6">
-//                     <h2 className="text-2xl font-bold text-neutral-900">New Arrivals</h2>
-//                     <Link href="/shop" className="text-primary-600 hover:text-primary-700 font-medium">
-//                         View all →
-//                     </Link>
-//                 </div>
-
-//                 {loading && <p className="text-neutral-500">Loading products...</p>}
-//                 {!loading && products.length === 0 && (
-//                     <p className="text-neutral-500">No products available yet.</p>
-//                 )}
-
-//                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-//                     {products.map((product, i) => (
-//                         <ProductCard key={product._id} product={product} priority={i < 4} />
-//                     ))}
-//                 </div>
-//             </main>
-//         </div>
-//     )
-// }
-
-
 'use client'
 
-    import { useEffect, useState } from 'react'
-    import Link from 'next/link'
-    import Image from 'next/image'
-    import { ArrowRight, Sparkles, TrendingUp, Package } from 'lucide-react'
-    import ProductCard from '@/components/ProductCard'
-    import { getProducts } from '@/lib/products'
-    import { Product } from '@/types'
-    import heaadset from '@/public/headphone.jpg'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
+import { ArrowRight, Sparkles, TrendingUp, Package } from 'lucide-react'
+import ProductCard from '@/components/ProductCard'
+import { getProducts } from '@/lib/products'
+import { Product } from '@/types'
+import headset from '@/public/headphone.jpg'
 
-    export default function HomePage() {
+export default function HomePage() {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -70,10 +19,6 @@
             .finally(() => setLoading(false))
     }, [])
 
-    // Real products carry no featured/new/sale flags — getProducts already
-    // sorts newest-first server-side, so we just slice different windows
-    // of the same list. Sale section is hidden (empty array) until the
-    // backend has a real discount/sale concept.
     const featuredProducts = products.slice(0, 4)
     const newArrivals = products.slice(4, 8)
     const saleProducts: Product[] = []
@@ -111,31 +56,27 @@
             <section className="relative h-[40vh] lg:h-[55vh] bg-neutral-900 overflow-hidden mt-20 sm:mt-26">
             <div className="absolute inset-0">
                 <Image
-                src={heaadset}
+                src={headset}
                 alt="Hero background"
                 fill
                 className="object-cover opacity-50"
                 priority
                 />
             </div>
-            
+
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
                 <div className="max-w-2xl animate-fade-in">
-                {/* <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full mb-6 animate-slide-up">
-                    <Sparkles className="w-4 h-4 text-primary-400" />
-                    <span className="text-white text-sm font-medium">New Collection 2026</span>
-                </div> */}
-                
-                <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 animate-slide-up animate-delay-100">
+
+                <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-white mb-6 animate-slide-up">
                     Crafted for the Modern Life
                 </h1>
-                
-                <p className="text-xl text-neutral-300 mb-8 animate-slide-up animate-delay-200">
-                    Discover curated collections of premium, handcrafted products. 
+
+                <p className="text-xl text-neutral-300 mb-8 animate-slide-up">
+                    Discover curated collections of premium, handcrafted products.
                     Quality meets artistry in every piece.
                 </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 animate-slide-up animate-delay-300">
+
+                <div className="flex flex-col sm:flex-row gap-4 animate-slide-up">
                     <Link
                     href="/shop"
                     className="inline-flex items-center justify-center px-8 py-4 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
@@ -144,7 +85,7 @@
                     <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                     <Link
-                    href="/about"
+                    href="/shop"
                     className="inline-flex items-center justify-center px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg transition-all duration-300"
                     >
                     Learn More
@@ -152,19 +93,12 @@
                 </div>
                 </div>
             </div>
-
-            {/* Scroll Indicator */}
-            {/* <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-                <div className="w-6 h-10 border-2 border-white/50 rounded-full flex justify-center pt-2">
-                <div className="w-1 h-3 bg-white/50 rounded-full" />
-                </div>
-            </div> */}
             </section>
 
             {/* Features */}
-            <section className="py-16 sm:py-10 bg-white border-y border-neutral-200 ">
+            <section className="py-16 sm:py-10 bg-white border-y border-neutral-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid sm:grid-cols-3 lg:grid-col text-neutral-700 md:grid-cols-3 gap-8">
+                <div className="grid sm:grid-cols-3 lg:grid-cols-3 text-neutral-700 gap-8">
                 <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
                     <Package className="w-8 h-8 text-primary-600" />
@@ -172,7 +106,7 @@
                     <h3 className="font-semibold text-lg mb-2">Free Shipping</h3>
                     <p className="text-neutral-600">On orders over $100</p>
                 </div>
-                
+
                 <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
                     <TrendingUp className="w-8 h-8 text-primary-600" />
@@ -180,7 +114,7 @@
                     <h3 className="font-semibold text-lg mb-2">Premium Quality</h3>
                     <p className="text-neutral-600">Curated collections</p>
                 </div>
-                
+
                 <div className="text-center">
                     <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
                     <Sparkles className="w-8 h-8 text-primary-600" />
@@ -252,7 +186,7 @@
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {featuredProducts.map((product, index) => (
-                    <div 
+                    <div
                     key={product._id}
                     className="animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
@@ -277,7 +211,7 @@
                     </p>
                 </div>
                 <Link
-                    href="/new"
+                    href="/shop"
                     className="hidden sm:inline-flex items-center text-neutral-800 text-primary-600 hover:text-primary-700 font-semibold"
                 >
                     View All
@@ -287,7 +221,7 @@
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {newArrivals.map((product, index) => (
-                    <div 
+                    <div
                     key={product._id}
                     className="animate-fade-in"
                     style={{ animationDelay: `${index * 100}ms` }}
@@ -299,7 +233,7 @@
             </div>
             </section>
 
-            {/* Sale Section */}
+            {/* Sale Section (hidden until saleProducts has items) */}
             {saleProducts.length > 0 && (
             <section className="py-20 bg-primary-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -313,7 +247,7 @@
                     </p>
                     </div>
                     <Link
-                    href="/sale"
+                    href="/shop"
                     className="hidden sm:inline-flex items-center text-primary-600 hover:text-primary-700 font-semibold"
                     >
                     View All
@@ -323,7 +257,7 @@
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {saleProducts.map((product, index) => (
-                    <div 
+                    <div
                         key={product._id}
                         className="animate-fade-in"
                         style={{ animationDelay: `${index * 100}ms` }}
@@ -361,4 +295,4 @@
 
         </div>
     )
-    }
+}

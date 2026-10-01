@@ -87,11 +87,11 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
                     <button
                         onClick={handleAddToCart}
                         disabled={product.totalStock === 0}
-                        className={`absolute bottom-0 left-0 right-0 bg-primary-600 text-neutral-900 py-3 font-semibold transition-all duration-300 hover:bg-primary-700 disabled:opacity-50 ${
+                        className={`absolute bottom-0 left-0 right-0 bg-primary-600 text-white py-3 font-semibold transition-all duration-300 hover:bg-primary-700 disabled:opacity-50 ${
                             isHovered ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
                         }`}
                     >
-                        <ShoppingBag className="w-5 h-5 text-neutral-900 inline mr-2" />
+                        <ShoppingBag className="w-5 h-5 text-white inline mr-2" />
                         {product.totalStock === 0 ? 'Out of Stock' : 'Add to Cart'}
                     </button>
 

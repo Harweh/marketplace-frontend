@@ -1,17 +1,35 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { Suspense, useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useInView } from 'react-intersection-observer'
-import { SlidersHorizontal, X } from 'lucide-react'
+import { SlidersHorizontal, X, Loader2 } from 'lucide-react'
 import ProductCard from '@/components/ProductCard'
 import { getProducts } from '@/lib/products'
 import { getCategories } from '@/lib/categories'
 import { Product, Category } from '@/types'
 
+export const dynamic = 'force-dynamic'
+
 const PAGE_SIZE = 20
 
 export default function ShopPage() {
+    return (
+        <Suspense fallback={<ShopFallback />}>
+            <ShopContent />
+        </Suspense>
+    )
+}
+
+function ShopFallback() {
+    return (
+        <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+            <Loader2 className="w-8 h-8 text-neutral-400 animate-spin" />
+        </div>
+    )
+}
+
+function ShopContent() {
     const searchParams = useSearchParams()
     const [products, setProducts] = useState<Product[]>([])
     const [categories, setCategories] = useState<Category[]>([])
